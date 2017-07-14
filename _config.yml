@@ -3,14 +3,11 @@
 # # # # # # # # # # # # #
 
 # Basic
-name:               "Kiko Plus"
+name:               "Kelog"
 
 author:
-  facebook:         your-id
-  youtubeUser:      your-id
-  youtubeChannel:   your-id
   twitter:          your-id
-  github:           your-id
+  github:           https://github.com/echoyinke
   stackoverflow:    your-id
   quora:            your-id
   linkedin:         your-id
@@ -24,7 +21,7 @@ author:
 
 copyright:
   year:             2017
-  name:             Kiko
+  name:             Ke
 
 # Google-analytics
 google-analytics:
@@ -32,11 +29,11 @@ google-analytics:
 
 # Disqus
 disqus:
-  id:               "kiko-plus"
+  id:               ""
 
 # URL
 url:                "https://echoyinke.github.io" # the base hostname & protocol for your site
-# url:                "http://localhost:4000" # use this url when you develop
+# url:               "http://localhost:4000" # use this url when you develop
 baseurl:            # the subpath of your site, e.g. /blog
 
 
@@ -62,7 +59,7 @@ nav:
   - name:           "Tags"
     url:            "/tags"
   - name:           "Github"
-    url:            "https://github.com/AWEEKJ/Kiko-plus"
+    url:            "https://github.com/echoyinke"
 
 # Sass
 sass:
