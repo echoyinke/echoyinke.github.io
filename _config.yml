@@ -86,7 +86,6 @@ gems:
   - jekyll-seo-tag
   - jekyll-paginate
   - jekyll-admin
-
 exclude:            [vendor]
 
-theme: jekyll-theme-minimal
+#theme: jekyll-theme-minimal
