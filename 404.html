@@ -1,14 +1,16 @@
 ---
 layout: default
+title: 404
+hide-in-nav: true
+description: "你来到了没有知识的荒原 :("
+header-img: "img/404-bg.jpg"
 permalink: /404.html
-title: 404 Not Found
 ---
-<header>
-  <h1 class="header-small">
-    <a href="{{site.url}}{{site.baseurl}}">{{ site.name }}</a>
-  </h1>
-</header>
-<div class="page">
-  <h1 class="page-title">{{ page.title }}</h1>
-  <span>Sorry, but the page you were trying to view does not exist.</span>
-</div>
+
+
+<!-- Page Header -->
+{% include intro-header.html type="page" short='true' %}
+
+<script>
+	document.body.classList.add('page-fullscreen');
+</script>
