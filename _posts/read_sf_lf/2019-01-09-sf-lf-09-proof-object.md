@@ -2,7 +2,7 @@
 title: "「SF-LC」9 ProofObjects"
 subtitle: "Logical Foundations - The Curry-Howard Correspondence "
 layout: post
-author: "Hux"
+author: "YiKe"
 header-style: text
 hidden: true
 tags:
