@@ -1,3 +1,12 @@
+title: "New Mac initialization"
+subtitle: "Mac practice"
+layout: post
+author: "YiKe"
+header-style: text
+tags: Macos
+- 
+
+
 # New Mac initialization
 ## Iterm2 config
 * https://www.jianshu.com/p/a5f478a143dc
