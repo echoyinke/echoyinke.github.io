@@ -1,11 +1,11 @@
 ---
-title: "New Mac initialization"
-subtitle: "Macos 初始化"
 layout: post
+title: "New Mac initialization"
+subtitle: '新Macp配置'
 author: "YiKe"
 header-style: text
 tags:
-- CS Idols
+- Macos
 ---
 
 # New Mac initialization
