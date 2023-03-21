@@ -1,11 +1,12 @@
+---
 title: "New Mac initialization"
-subtitle: "Mac practice"
+subtitle: "Macos 初始化"
 layout: post
 author: "YiKe"
 header-style: text
-tags: Macos
-- 
-
+tags:
+- CS Idols
+---
 
 # New Mac initialization
 ## Iterm2 config
