@@ -49,11 +49,11 @@ Transformer模型主要分为两大部分，分别是**Encoder**和**Decoder**�
 
 论文中使用了sin和cos函数的线性变换来提供给模型位置信息:
 
-$$ PE{(pos,2i)} = \\sin(pos / 10000^{2i/d\_{\\text{model}}}) \\\\ PE{(pos,2i+1)} = \\cos(pos / 10000^{2i/d\_{\\text{model}}}) $$
+$$ PE{(pos,2i)} = \sin(pos / 10000^{2i/d\_{\text{model}}}) \ PE{(pos,2i+1)} = \cos(pos / 10000^{2i/d\_{\text{model}}}) $$
 
-上式中$pos$指的是一句话中某个字的位置，取值范围是$\[0, \\text{max\_sequence\_length})$，$i$指的是字向量的维度序号，取值范围是$\[0, \\text{embedding\_dimension}/2)$，$d\_{\\text{model}}$指的是embedding\_dimension​的值
+上式中$pos$指的是一句话中某个字的位置，取值范围是$\[0, \text{max\_sequence\_length})$，$i$指的是字向量的维度序号，取值范围是$\[0, \text{embedding\_dimension}/2)$，$d\_{\text{model}}$指的是embedding\_dimension​的值
 
-上面有$\\sin$和$\\cos$一组公式，也就是对应着embedding\_dimension维度的一组奇数和偶数的序号的维度，例如0,1一组，2,3一组，分别用上面的$\\sin$和$\\cos$函数做处理，从而产生不同的周期性变化，而位置嵌入在embedding\_dimension​维度上随着维度序号增大，周期变化会越来越慢，最终产生一种包含位置信息的纹理，就像论文原文中第六页讲的，位置嵌入函数的周期从$2 \\pi$到$10000 \* 2 \\pi$变化，而每一个位置在embedding\_dimension​维度上都会得到不同周期的$\\sin$和$\\cos$函数的取值组合，从而产生独一的纹理位置信息，最终使得模型学到位置之间的依赖关系和自然语言的时序特性
+上面有$\sin$和$\cos$一组公式，也就是对应着embedding\_dimension维度的一组奇数和偶数的序号的维度，例如0,1一组，2,3一组，分别用上面的$\sin$和$\cos$函数做处理，从而产生不同的周期性变化，而位置嵌入在embedding\_dimension​维度上随着维度序号增大，周期变化会越来越慢，最终产生一种包含位置信息的纹理，就像论文原文中第六页讲的，位置嵌入函数的周期从$2 \pi$到$10000 \* 2 \pi$变化，而每一个位置在embedding\_dimension​维度上都会得到不同周期的$\sin$和$\cos$函数的取值组合，从而产生独一的纹理位置信息，最终使得模型学到位置之间的依赖关系和自然语言的时序特性
 
 
 下面画一下位置嵌入，纵向观察，可见随着embedding\_dimension​序号增大，位置嵌入函数的周期变化越来越平缓
@@ -158,7 +158,7 @@ softmax([2, 4, 4]) = [0.0, 0.5, 0.5]
 
 ![](https://z3.ax1x.com/2021/04/20/c7wF9x.png#shadow)
 
-接下来将$Q$和$K^T$相乘，然后除以$\\sqrt{d\_k}$（这是论文中提到的一个trick），经过softmax以后再乘以$V$得到输出
+接下来将$Q$和$K^T$相乘，然后除以$\sqrt{d\_k}$（这是论文中提到的一个trick），经过softmax以后再乘以$V$得到输出
 
 ![](https://z3.ax1x.com/2021/04/20/c7wk36.png#shadow)
 
@@ -178,33 +178,33 @@ softmax([2, 4, 4]) = [0.0, 0.5, 0.5]
 
 上面Self Attention的计算过程中，我们通常使用mini-batch来计算，也就是一次计算多句话，即$X$的维度是`[batch_size, sequence_length]`，sequence\_length​是句长，而一个mini-batch是由多个不等长的句子组成的，我们需要按照这个mini-batch中最大的句长对剩余的句子进行补齐，一般用0进行填充，这个过程叫做padding
 
-但这时在进行softmax就会产生问题。回顾softmax函数$\\sigma(z\_i)=\\frac{e^{z\_i}}{\\sum\_{j=1}^K e^{z\_j}}$，$e^0$是1，是有值的，这样的话softmax中被padding的部分就参与了运算，相当于让无效的部分参与了运算，这可能会产生很大的隐患。因此需要做一个mask操作，让这些无效的区域不参与运算，一般是给无效区域加一个很大的负数偏置，即
+但这时在进行softmax就会产生问题。回顾softmax函数$\sigma(z\_i)=\frac{e^{z\_i}}{\sum\_{j=1}^K e^{z\_j}}$，$e^0$是1，是有值的，这样的话softmax中被padding的部分就参与了运算，相当于让无效的部分参与了运算，这可能会产生很大的隐患。因此需要做一个mask操作，让这些无效的区域不参与运算，一般是给无效区域加一个很大的负数偏置，即
 
-$$ \\begin{align\*} &Z\_{illegal}=Z\_{illegal}+bias\_{illegal}\\\\ &bias\_{illegal}→-∞ \\end{align\*} $$
+$$ \begin{align\*} &Z\_{illegal}=Z\_{illegal}+bias\_{illegal}\ &bias\_{illegal}→-∞ \end{align\*} $$
 
 ### 3\. 残差连接和Layer Normalization
 
 #### 残差连接
 
-我们在上一步得到了经过self-attention加权之后输出，也就是$\\text{Self-Attention}(Q, \\ K, \\ V)$，然后把他们加起来做残差连接
+我们在上一步得到了经过self-attention加权之后输出，也就是$\text{Self-Attention}(Q, \ K, \ V)$，然后把他们加起来做残差连接
 
-$$ X\_{embedding} + \\text{Self-Attention}(Q, \\ K, \\ V) $$
+$$ X\_{embedding} + \text{Self-Attention}(Q, \ K, \ V) $$
 
 #### Layer Normalization
 
 Layer Normalization的作用是把神经网络中隐藏层归一为标准正态分布，也就是$i.i.d$独立同分布，以起到加快训练速度，加速收敛的作用
 
-$$ \\mu\_{j}=\\frac{1}{m} \\sum^{m}\_{i=1}x\_{ij} $$
+$$ \mu\_{j}=\frac{1}{m} \sum^{m}\_{i=1}x\_{ij} $$
 
 上式以矩阵的列（column）为单位求均值;
 
-$$ \\sigma^{2}\_{j}=\\frac{1}{m} \\sum^{m}\_{i=1}(x\_{ij}-\\mu\_{j})^{2} $$
+$$ \sigma^{2}\_{j}=\frac{1}{m} \sum^{m}\_{i=1}(x\_{ij}-\mu\_{j})^{2} $$
 
 上式以矩阵的列（column）为单位求方差
 
-$$ LayerNorm(x)=\\frac{x\_{ij}-\\mu\_{j}}{\\sqrt{\\sigma^{2}\_{j}+\\epsilon}} $$
+$$ LayerNorm(x)=\frac{x\_{ij}-\mu\_{j}}{\sqrt{\sigma^{2}\_{j}+\epsilon}} $$
 
-然后用**每一列**的**每一个元素**减去**这列的均值**，再除以**这列的标准差**，从而得到归一化后的数值，加$\\epsilon$是为了防止分母为0
+然后用**每一列**的**每一个元素**减去**这列的均值**，再除以**这列的标准差**，从而得到归一化后的数值，加$\epsilon$是为了防止分母为0
 
 ![](https://z3.ax1x.com/2021/04/20/c7wtbQ.png#shadow)
 
@@ -218,27 +218,27 @@ $$ LayerNorm(x)=\\frac{x\_{ij}-\\mu\_{j}}{\\sqrt{\\sigma^{2}\_{j}+\\epsilon}} $$
 
 1). 字向量与位置编码
 
-$$ X = \\text{Embedding-Lookup}(X) + \\text{Positional-Encoding} $$
+$$ X = \text{Embedding-Lookup}(X) + \text{Positional-Encoding} $$
 
 2). 自注意力机制
 
-$$ Q = \\text{Linear}\_q(X) = XW\_{Q}\\\\ K = \\text{Linear}\_k(X) = XW\_{K}\\\\ V = \\text{Linear}\_v(X) = XW\_{V}\\\\ X\_{attention} = \\text{Self-Attention}(Q,K,V) $$
+$$ Q = \text{Linear}\_q(X) = XW\_{Q}\ K = \text{Linear}\_k(X) = XW\_{K}\ V = \text{Linear}\_v(X) = XW\_{V}\ X\_{attention} = \text{Self-Attention}(Q,K,V) $$
 
 3). self-attention残差连接与Layer Normalization
 
-$$ X\_{attention} = X + X\_{attention}\\\\ X\_{attention} = \\text{LayerNorm}(X\_{attention}) $$
+$$ X\_{attention} = X + X\_{attention}\ X\_{attention} = \text{LayerNorm}(X\_{attention}) $$
 
 4). 下面进行Encoder block结构图中的**第4部分**，也就是FeedForward，其实就是两层线性映射并用激活函数激活，比如说$ReLU$
 
-$$ X\_{hidden} = \\text{Linear}(\\text{ReLU}(\\text{Linear}(X\_{attention}))) $$
+$$ X\_{hidden} = \text{Linear}(\text{ReLU}(\text{Linear}(X\_{attention}))) $$
 
 5). FeedForward残差连接与Layer Normalization
 
-$$ X\_{hidden} = X\_{attention} + X\_{hidden}\\\\ X\_{hidden} = \\text{LayerNorm}(X\_{hidden}) $$
+$$ X\_{hidden} = X\_{attention} + X\_{hidden}\ X\_{hidden} = \text{LayerNorm}(X\_{hidden}) $$
 
 其中
 
-$$ X\_{hidden} \\in \\mathbb{R}^{batch\\\_size \\ \* \\ seq\\\_len. \\ \* \\ embed\\\_dim} $$
+$$ X\_{hidden} \in \mathbb{R}^{batch\_size \ \* \ seq\_len. \ \* \ embed\_dim} $$
 
 ### 5\. Transformer Decoder整体结构
 
@@ -256,7 +256,7 @@ $$ X\_{hidden} \\in \\mathbb{R}^{batch\\\_size \\ \* \\ seq\\\_len. \\ \* \\ emb
 
 具体来说，传统Seq2Seq中Decoder使用的是RNN模型，因此在训练过程中输入$t$时刻的词，模型无论如何也看不到未来时刻的词，因为循环神经网络是时间驱动的，只有当$t$时刻运算结束了，才能看到$t+1$时刻的词。而Transformer Decoder抛弃了RNN，改为Self-Attention，由此就产生了一个问题，在训练过程中，整个ground truth都暴露在Decoder中，这显然是不对的，我们需要对Decoder的输入进行一些处理，该处理被称为Mask
 
-举个例子，Decoder的ground truth为"<start> I am fine"，我们将这个句子输入到Decoder中，经过WordEmbedding和Positional Encoding之后，将得到的矩阵做三次线性变换（$W\_Q,W\_K,W\_V$）。然后进行self-attention操作，首先通过$\\frac{Q\\times K^T}{\\sqrt{d\_k}}$得到Scaled Scores，接下来非常关键，我们要对Scaled Scores进行Mask，举个例子，当我们输入"I"时，模型目前仅知道包括"I"在内之前所有字的信息，即"<start>"和"I"的信息，不应该让其知道"I"之后词的信息。道理很简单，我们做预测的时候是按照顺序一个字一个字的预测，怎么能这个字都没预测完，就已经知道后面字的信息了呢？Mask非常简单，首先生成一个下三角全0，上三角全为负无穷的矩阵，然后将其与Scaled Scores相加即可
+举个例子，Decoder的ground truth为"<start> I am fine"，我们将这个句子输入到Decoder中，经过WordEmbedding和Positional Encoding之后，将得到的矩阵做三次线性变换（$W\_Q,W\_K,W\_V$）。然后进行self-attention操作，首先通过$\frac{Q\times K^T}{\sqrt{d\_k}}$得到Scaled Scores，接下来非常关键，我们要对Scaled Scores进行Mask，举个例子，当我们输入"I"时，模型目前仅知道包括"I"在内之前所有字的信息，即"<start>"和"I"的信息，不应该让其知道"I"之后词的信息。道理很简单，我们做预测的时候是按照顺序一个字一个字的预测，怎么能这个字都没预测完，就已经知道后面字的信息了呢？Mask非常简单，首先生成一个下三角全0，上三角全为负无穷的矩阵，然后将其与Scaled Scores相加即可
 
 ![](https://z3.ax1x.com/2021/04/20/c7w48x.png#shadow)
 

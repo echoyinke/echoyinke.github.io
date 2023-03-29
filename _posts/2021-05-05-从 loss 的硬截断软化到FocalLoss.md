@@ -15,41 +15,41 @@ tags:
 
 #### 修正的交叉熵损失（硬截断）
 
-怎样才能达到我们上面说的目的呢？很简单，调整损失函数即可，这里主要借鉴了hinge loss和triplet loss的思想。一般常用的交叉熵损失函数是（$y$为one-hot表示，$\\hat{y}$为经过softmax后的输出）：
+怎样才能达到我们上面说的目的呢？很简单，调整损失函数即可，这里主要借鉴了hinge loss和triplet loss的思想。一般常用的交叉熵损失函数是（$y$为one-hot表示，$\hat{y}$为经过softmax后的输出）：
 
-$$ L\_{old} = -\\sum y \\log \\hat{y} $$
+$$ L\_{old} = -\sum y \log \hat{y} $$
 
 > 实际上交叉熵损失函数的严格定义为：
 >
-> $$ L(\\hat{y}, y)=-\\sum (y\\log \\hat{y} + (1-y) \\log (1-\\hat{y})) $$
+> $$ L(\hat{y}, y)=-\sum (y\log \hat{y} + (1-y) \log (1-\hat{y})) $$
 >
 > 但PyTorch官方实现的`CrossEntropyLoss()`函数的形式是：
 >
-> $$ L(\\hat{y}, y) = -\\sum y\\log \\hat{y} $$
+> $$ L(\hat{y}, y) = -\sum y\log \hat{y} $$
 >
 > 实际上究竟用哪个公式并不重要，这里提一下是为了避免读者误将PyTorch版交叉熵损失认为是原本的交叉熵损失的样貌
 
-假设阈值选定为$m=0.6$，这个阈值原则上大于0.5均可。引入单位阶跃函数$\\theta(x)$：
+假设阈值选定为$m=0.6$，这个阈值原则上大于0.5均可。引入单位阶跃函数$\theta(x)$：
 
-$$ \\theta(x) = \\left\\{\\begin{aligned}&1, x > 0\\\\ &\\frac{1}{2}, x = 0\\\\ &0, x < 0\\end{aligned}\\right. $$
+$$ \theta(x) = \left\{\begin{aligned}&1, x > 0\\ &\frac{1}{2}, x = 0\\ &0, x < 0\end{aligned}\right. $$
 
 那么，考虑新的损失函数：
 
-$$ L\_{new} = -\\sum\_y \\lambda(y, \\hat{y}) y\\log \\hat{y} $$
+$$ L\_{new} = -\sum\_y \lambda(y, \hat{y}) y\log \hat{y} $$
 
 其中
 
-$$ \\lambda(y, \\hat{y}) = 1-\\theta(y-m)\\theta(\\hat{y}-m)-\\theta(1-m-y)\\theta(1-m-\\hat{y}) $$
+$$ \lambda(y, \hat{y}) = 1-\theta(y-m)\theta(\hat{y}-m)-\theta(1-m-y)\theta(1-m-\hat{y}) $$
 
 即
 
-$$ \\lambda(y,\\hat{y})=\\left\\{\\begin{aligned}&0,\\,(y=1\\text{且}\\hat{y} > m)\\text{或}(y=0\\text{且}\\hat{y} < 1-m)\\\\ &1,\\,\\text{其他情形}\\end{aligned}\\right. $$
+$$ \lambda(y,\hat{y})=\left\{\begin{aligned}&0,\,(y=1\text{且}\hat{y} > m)\text{或}(y=0\text{且}\hat{y} < 1-m)\\ &1,\,\text{其他情形}\end{aligned}\right. $$
 
-$L\_{new}$就是在交叉熵的基础上加入了修正项$\\lambda(y,\\hat{y})$，这一项意味着，当进入一个正样本时，那么$y=1$，显然
+$L\_{new}$就是在交叉熵的基础上加入了修正项$\lambda(y,\hat{y})$，这一项意味着，当进入一个正样本时，那么$y=1$，显然
 
-$$ \\lambda(1, \\hat{y})=1-\\theta(\\hat{y} - m) $$
+$$ \lambda(1, \hat{y})=1-\theta(\hat{y} - m) $$
 
-这时候，如果$\\hat{y}>m$，那么$\\lambda(1, \\hat{y})=0$，这时交叉熵自动为0（达到最小值）；反之，$\\hat{y}<m$则有$\\lambda(1, \\hat{y})=1$，此时保持交叉熵，也就是说，**如果正样本的输出已经大于$m$了，那就不更新参数了，小于$m$才继续更新；类似地可以分析负样本的情形，如果负样本的输出已经小于$1-m$了，那就不更新参数了，大于$1-m$才继续更新**
+这时候，如果$\hat{y}>m$，那么$\lambda(1, \hat{y})=0$，这时交叉熵自动为0（达到最小值）；反之，$\hat{y}<m$则有$\lambda(1, \hat{y})=1$，此时保持交叉熵，也就是说，**如果正样本的输出已经大于$m$了，那就不更新参数了，小于$m$才继续更新；类似地可以分析负样本的情形，如果负样本的输出已经小于$1-m$了，那就不更新参数了，大于$1-m$才继续更新**
 
 这样一来，只要将原始的交叉熵损失，换成修正的交叉熵$L\_{new}$，就可以达到我们设计的目的了。下面是笔者利用PyTorch实现的多分类Loss（支持二分类），Keras版本请查看苏剑林大佬的[这篇博客](https://kexue.fm/archives/4293)
 
@@ -101,17 +101,17 @@ print(loss_fn(y_pred_softmax, label).item())
 
 #### 软化Loss
 
-硬截断会出现不足，关键在于因子$\\lambda(y, \\hat{y})$是不可导的，或者说我们认为它导数为0，因此这一项不会对梯度有任何帮助，从而我们不能从它这里得到合理的反馈（也就是模型不知道"保持"意味着什么）
+硬截断会出现不足，关键在于因子$\lambda(y, \hat{y})$是不可导的，或者说我们认为它导数为0，因此这一项不会对梯度有任何帮助，从而我们不能从它这里得到合理的反馈（也就是模型不知道"保持"意味着什么）
 
 解决这个问题的一个方法就是"软化"这个loss，**"软化"就是把一些本来不可导的函数用一些可导函数来近似**，数学角度应该叫"光滑化"。这样处理之后本来不可导的东西就可导
 
-其实$\\lambda(y, \\hat{y})$中不可导的部分是$\\theta(x)$，因此我们只要"软化"$\\theta(x)$即可，而软化它再容易不过了，只需要利用sigmoid函数！我们有
+其实$\lambda(y, \hat{y})$中不可导的部分是$\theta(x)$，因此我们只要"软化"$\theta(x)$即可，而软化它再容易不过了，只需要利用sigmoid函数！我们有
 
-$$ \\theta(x)=\\lim\_{K\\to +\\infty}\\sigma(Kx) $$
+$$ \theta(x)=\lim\_{K\to +\infty}\sigma(Kx) $$
 
-所以很显然，我们只需要将$\\theta(x)$替换为$\\sigma(Kx)$即可：
+所以很显然，我们只需要将$\theta(x)$替换为$\sigma(Kx)$即可：
 
-$$ \\begin{aligned} \\lambda(y, \\hat{y}) = 1&-\\sigma(K(y-m))\\sigma(K(\\hat{y}-m))\\\\&-\\sigma(K(1-m-y))\\sigma(K(1-m-\\hat{y})) \\end{aligned} $$
+$$ \begin{aligned} \lambda(y, \hat{y}) = 1&-\sigma(K(y-m))\sigma(K(\hat{y}-m))\\&-\sigma(K(1-m-y))\sigma(K(1-m-\hat{y})) \end{aligned} $$
 
 #### Focal Loss
 
@@ -119,63 +119,63 @@ $$ \\begin{aligned} \\lambda(y, \\hat{y}) = 1&-\\sigma(K(y-m))\\sigma(K(\\hat{y}
 
 二分类问题的标准loss是交叉熵
 
-$$ L\_{ce} = -y\\log \\hat{y} - (1-y)\\log(1-\\hat{y})=\\left\\{\\begin{aligned}&-\\log(\\hat{y}),\\,\\text{当}y=1\\\\ &-\\log(1-\\hat{y}),\\,\\text{当}y=0\\end{aligned}\\right. $$
+$$ L\_{ce} = -y\log \hat{y} - (1-y)\log(1-\hat{y})=\left\{\begin{aligned}&-\log(\hat{y}),\,\text{当}y=1\\ &-\log(1-\hat{y}),\,\text{当}y=0\end{aligned}\right. $$
 
-其中$y\\in \\{0, 1\\}$是真实标签，$\\hat{y}$是预测值。当然，对于二分类函数我们几乎都是用sigmoid函数激活$\\hat{y}=\\sigma(x)$，所以相当于
+其中$y\in \{0, 1\}$是真实标签，$\hat{y}$是预测值。当然，对于二分类函数我们几乎都是用sigmoid函数激活$\hat{y}=\sigma(x)$，所以相当于
 
-$$ L\_{ce} = -y\\log \\sigma(x) - (1-y)\\log\\sigma(-x)=\\left\\{\\begin{aligned}&-\\log \\sigma(x),\\,\\text{当}y=1\\\\ &-\\log\\sigma(-x),\\,\\text{当}y=0\\end{aligned}\\right. $$
+$$ L\_{ce} = -y\log \sigma(x) - (1-y)\log\sigma(-x)=\left\{\begin{aligned}&-\log \sigma(x),\,\text{当}y=1\\ &-\log\sigma(-x),\,\text{当}y=0\end{aligned}\right. $$
 
-> $1-\\sigma(x)=\\sigma(-x)$
+> $1-\sigma(x)=\sigma(-x)$
 
 引入硬截断后的二分类loss形式为
 
-$$ L^\* = \\lambda(y, \\hat{y})\\cdot L\_{ce} $$
+$$ L^\* = \lambda(y, \hat{y})\cdot L\_{ce} $$
 
 其中
 
-$$ \\begin{aligned} \\lambda(y, \\hat{y})&=\\left\\{\\begin{aligned}&1-\\theta(\\hat{y}-0.5),\\,\\text{当}y=1\\\\ &1-\\theta(0.5 - \\hat{y}),\\,\\text{当}y=0\\end{aligned}\\right.\\\\ &=\\left\\{\\begin{aligned}&\\theta(0.5-\\hat{y}),\\,\\text{当}y=1\\\\ &\\theta(\\hat{y} - 0.5),\\,\\text{当}y=0\\end{aligned}\\right. \\end{aligned} $$
+$$ \begin{aligned} \lambda(y, \hat{y})&=\left\{\begin{aligned}&1-\theta(\hat{y}-0.5),\,\text{当}y=1\\ &1-\theta(0.5 - \hat{y}),\,\text{当}y=0\end{aligned}\right.\\ &=\left\{\begin{aligned}&\theta(0.5-\hat{y}),\,\text{当}y=1\\ &\theta(\hat{y} - 0.5),\,\text{当}y=0\end{aligned}\right. \end{aligned} $$
 
 实际上，它也等价于
 
-$$ \\lambda(y, \\hat{y}) = \\left\\{\\begin{aligned}&\\theta(-x),\\,\\text{当}y=1\\\\ &\\theta(x),\\,\\text{当}y=0\\end{aligned}\\right. $$
+$$ \lambda(y, \hat{y}) = \left\{\begin{aligned}&\theta(-x),\,\text{当}y=1\\ &\theta(x),\,\text{当}y=0\end{aligned}\right. $$
 
-> 注意这里我并没有说"等于"，而是"等价于"，因为$\\theta(0.5-\\hat{y})$表示$\\hat{y}>0.5$时取0，小于0.5时取1；而$\\theta(-x)$表示$x>0$时取0，小于0时取1。$\\hat{y}>0.5$和$\\hat{y}<0.5$分别刚好对应$x>0$和$x<0$
+> 注意这里我并没有说"等于"，而是"等价于"，因为$\theta(0.5-\hat{y})$表示$\hat{y}>0.5$时取0，小于0.5时取1；而$\theta(-x)$表示$x>0$时取0，小于0时取1。$\hat{y}>0.5$和$\hat{y}<0.5$分别刚好对应$x>0$和$x<0$
 
-因为$\\theta(x)=\\lim\\limits\_{K\\to +\\infty}\\sigma(Kx)$，所以很显然有
+因为$\theta(x)=\lim\limits\_{K\to +\infty}\sigma(Kx)$，所以很显然有
 
-$$ L^\* =\\left\\{\\begin{aligned}&-\\sigma(-Kx)\\log \\sigma(x),\\,\\text{当}y=1\\\\ &-\\sigma(Kx)\\log\\sigma(-x),\\,\\text{当}y=0\\end{aligned}\\right. $$
+$$ L^\* =\left\{\begin{aligned}&-\sigma(-Kx)\log \sigma(x),\,\text{当}y=1\\ &-\sigma(Kx)\log\sigma(-x),\,\text{当}y=0\end{aligned}\right. $$
 
 * * *
 
 以上仅仅只是我们根据已知内容推导的二分类交叉熵损失，Kaiming大神的Focal Loss形式如下：
 
-$$ L\_{fl}=\\left\\{\\begin{aligned}&-(1-\\hat{y})^{\\gamma}\\log \\hat{y},\\,\\text{当}y=1\\\\ &-\\hat{y}^{\\gamma}\\log (1-\\hat{y}),\\,\\text{当}y=0\\end{aligned}\\right. $$
+$$ L\_{fl}=\left\{\begin{aligned}&-(1-\hat{y})^{\gamma}\log \hat{y},\,\text{当}y=1\\ &-\hat{y}^{\gamma}\log (1-\hat{y}),\,\text{当}y=0\end{aligned}\right. $$
 
-带入$\\hat{y} = \\sigma(x)$则有
+带入$\hat{y} = \sigma(x)$则有
 
-$$ L\_{fl}=\\left\\{\\begin{aligned}&-\\sigma^{\\gamma}(-x)\\log \\sigma(x),\\,\\text{当}y=1\\\\ &-\\sigma^{\\gamma}(x)\\log\\sigma(-x),\\,\\text{当}y=0\\end{aligned}\\right. $$
+$$ L\_{fl}=\left\{\begin{aligned}&-\sigma^{\gamma}(-x)\log \sigma(x),\,\text{当}y=1\\ &-\sigma^{\gamma}(x)\log\sigma(-x),\,\text{当}y=0\end{aligned}\right. $$
 
-特别地，**如果$K$和$\\gamma$都取1，那么$L^\*=L\_{fl}$！**
+特别地，**如果$K$和$\gamma$都取1，那么$L^\*=L\_{fl}$！**
 
-事实上$K$和$\\gamma$的作用是一样的，都是为了调节权重曲线的陡度，只是调节的方式不太一样。注意$L^\*$或$L\_{fl}$实际上都已经包含了对不均衡样本的解决办法，或者说，类别不均衡本质上就是分类难度差异的体现。**比如负样本远比正样本多的话，模型肯定会倾向于数目多的负类（可以想像模型直接无脑全部预测为负类），这时负类的$\\hat{y}^{\\gamma}$或$\\sigma(Kx)$都很小，而正类的$(1- \\hat{y})^{\\gamma}$或$\\sigma(-Kx)$都很大，这时模型就会开始集中精力关注正样本**
+事实上$K$和$\gamma$的作用是一样的，都是为了调节权重曲线的陡度，只是调节的方式不太一样。注意$L^\*$或$L\_{fl}$实际上都已经包含了对不均衡样本的解决办法，或者说，类别不均衡本质上就是分类难度差异的体现。**比如负样本远比正样本多的话，模型肯定会倾向于数目多的负类（可以想像模型直接无脑全部预测为负类），这时负类的$\hat{y}^{\gamma}$或$\sigma(Kx)$都很小，而正类的$(1- \hat{y})^{\gamma}$或$\sigma(-Kx)$都很大，这时模型就会开始集中精力关注正样本**
 
 当然，Kaiming大神还发现对$L\_{fl}$做个权重调整，结果会有微小提升
 
-$$ L\_{fl}=\\left\\{\\begin{aligned}&-\\alpha(1-\\hat{y})^{\\gamma}\\log \\hat{y},\\,\\text{当}y=1\\\\ &-(1-\\alpha)\\hat{y}^{\\gamma}\\log (1-\\hat{y}),\\,\\text{当}y=0\\end{aligned}\\right. $$
+$$ L\_{fl}=\left\{\begin{aligned}&-\alpha(1-\hat{y})^{\gamma}\log \hat{y},\,\text{当}y=1\\ &-(1-\alpha)\hat{y}^{\gamma}\log (1-\hat{y}),\,\text{当}y=0\end{aligned}\right. $$
 
-通过一系列调参，得到$\\alpha=0.25, \\gamma=2$（在他的模型上）的效果最好。注意在他的任务中，正样本是少数样本，也就是说，本来正样本难以“匹敌”负样本，但经过$(1−\\hat{y})^{\\gamma}$和$\\hat{y}^{\\gamma}$的"操控"后，也许形势还逆转了，因此要对正样本降权。不过我认为这样调整只是经验结果，理论上很难有一个指导方案来决定$\\alpha$的值，如果没有大算力调参，倒不如直接让$\\alpha=0.5$（均等）
+通过一系列调参，得到$\alpha=0.25, \gamma=2$（在他的模型上）的效果最好。注意在他的任务中，正样本是少数样本，也就是说，本来正样本难以“匹敌”负样本，但经过$(1−\hat{y})^{\gamma}$和$\hat{y}^{\gamma}$的"操控"后，也许形势还逆转了，因此要对正样本降权。不过我认为这样调整只是经验结果，理论上很难有一个指导方案来决定$\alpha$的值，如果没有大算力调参，倒不如直接让$\alpha=0.5$（均等）
 
 #### 多分类
 
 Focal Loss在多分类中的形式也很容易得到，其实就是
 
-$$ L\_{fl} = -(1-\\hat{y})^\\gamma\\log\\hat{y\_t} $$
+$$ L\_{fl} = -(1-\hat{y})^\gamma\log\hat{y\_t} $$
 
-其中，$\\hat{y\_t}$是目标的预测值，一般是经过Softmax后的结果
+其中，$\hat{y\_t}$是目标的预测值，一般是经过Softmax后的结果
 
 #### 为什么Focal Loss有效？
 
-这一节我们试着理解为什么Focal Loss有效，下图展示了不同$\\gamma$值下Focal Loss曲线。特别地，当$\\gamma=0$时，其形式就是CrossEntropy Loss
+这一节我们试着理解为什么Focal Loss有效，下图展示了不同$\gamma$值下Focal Loss曲线。特别地，当$\gamma=0$时，其形式就是CrossEntropy Loss
 
 ![](https://z3.ax1x.com/2021/05/05/gKA4ds.png#shadow)
 
@@ -183,9 +183,9 @@ $$ L\_{fl} = -(1-\\hat{y})^\\gamma\\log\\hat{y\_t} $$
 
 > 模型实际上可能变得过于自信（或者说过拟合），因此该模型无法更好的推广（鲁棒性不强）
 
-Focal Loss不同于上述方案，从图中可以看出，使用$\\gamma >1$的Focal Loss可以减少模型预测正确概率大于0.5的损失。因此，在类别不平衡的情况下，Focal Loss会将模型的注意力转向稀有类别。实际上仔细观察上图我们还能分析得到：**更大的$\\gamma$值对模型预测概率的"宽容度"越高**。如何理解这句话？我们对比$\\gamma=2$和$\\gamma=5$的两条曲线，$\\gamma=5$时，模型预测概率只要大于0.3，Loss就非常小了；$\\gamma=2$时，模型预测概率至少要大于0.5，Loss才非常小，所以这变相是在人为规定置信度
+Focal Loss不同于上述方案，从图中可以看出，使用$\gamma >1$的Focal Loss可以减少模型预测正确概率大于0.5的损失。因此，在类别不平衡的情况下，Focal Loss会将模型的注意力转向稀有类别。实际上仔细观察上图我们还能分析得到：**更大的$\gamma$值对模型预测概率的"宽容度"越高**。如何理解这句话？我们对比$\gamma=2$和$\gamma=5$的两条曲线，$\gamma=5$时，模型预测概率只要大于0.3，Loss就非常小了；$\gamma=2$时，模型预测概率至少要大于0.5，Loss才非常小，所以这变相是在人为规定置信度
 
-下面是基于PyTorch实现支持多分类的Focal Loss代码，源自[https://github.com/yatengLG/Focal-Loss-Pytorch](https://github.com/yatengLG/Focal-Loss-Pytorch)，由于代码年久失修，有些在issue中提出的bug作者还没来得及修改，这里我贴出的代码是经过修改后的，其中需要注意的是$\\alpha$这个参数，**样本较多的类别应该分配一个较大的权重，而样本数较少的类别应该分配一个较小的权重**。这里我默认$\\alpha=0.75$相当于默认多分类中，第0个类别样本数比较大，如果举个具体的例子，在NER任务中，`other`这个这个类别对应的索引是0，而且`other`这个类别一般来说都特别多（大部分情况下是最多的），所以`other`分配到的权重应该是$\\alpha=0.75$，而其他类别的权重均为$1-\\alpha=0.25$
+下面是基于PyTorch实现支持多分类的Focal Loss代码，源自[https://github.com/yatengLG/Focal-Loss-Pytorch](https://github.com/yatengLG/Focal-Loss-Pytorch)，由于代码年久失修，有些在issue中提出的bug作者还没来得及修改，这里我贴出的代码是经过修改后的，其中需要注意的是$\alpha$这个参数，**样本较多的类别应该分配一个较大的权重，而样本数较少的类别应该分配一个较小的权重**。这里我默认$\alpha=0.75$相当于默认多分类中，第0个类别样本数比较大，如果举个具体的例子，在NER任务中，`other`这个这个类别对应的索引是0，而且`other`这个类别一般来说都特别多（大部分情况下是最多的），所以`other`分配到的权重应该是$\alpha=0.75$，而其他类别的权重均为$1-\alpha=0.25$
 
 ```python
 import torch
@@ -253,11 +253,11 @@ print(loss_fn(y_pred, label).item())
 
 在笔者研究Focal Loss的这几天，看了不少文章，其中也提到很多关于Focal Loss的问题，这里一一列出进行记录
 
-#### 关于参数$\\alpha$（非常重要，仔细阅读）
+#### 关于参数$\alpha$（非常重要，仔细阅读）
 
-很多读者可能想当然认为应该给样本较少的类别赋予一个较大的权重，实际上如果没有$(1-\\hat{y}^\\gamma)$以及$\\hat{y}^{\\gamma}$这两项，这么做确实没问题。但由于引入了这两项，本来样本少的类别应该是难分类的，结果随着模型的训练，样本多的类别变得难分类了，在这种情况下，我们应该给样本少的类别一个较小的权重，而给样本多的类别一个较大的权重
+很多读者可能想当然认为应该给样本较少的类别赋予一个较大的权重，实际上如果没有$(1-\hat{y}^\gamma)$以及$\hat{y}^{\gamma}$这两项，这么做确实没问题。但由于引入了这两项，本来样本少的类别应该是难分类的，结果随着模型的训练，样本多的类别变得难分类了，在这种情况下，我们应该给样本少的类别一个较小的权重，而给样本多的类别一个较大的权重
 
-简单来说，添加$(1-\\hat{y}^\\gamma)$以及$\\hat{y}^{\\gamma}$是为了平衡正负样本，而添加$\\alpha$和$(1-\\alpha)$又是为了平衡$(1-\\hat{y}^\\gamma)$以及$\\hat{y}^{\\gamma}$，有一种套娃的思想在里面，平衡来平衡去
+简单来说，添加$(1-\hat{y}^\gamma)$以及$\hat{y}^{\gamma}$是为了平衡正负样本，而添加$\alpha$和$(1-\alpha)$又是为了平衡$(1-\hat{y}^\gamma)$以及$\hat{y}^{\gamma}$，有一种套娃的思想在里面，平衡来平衡去
 
 #### 训练过程
 
@@ -267,23 +267,23 @@ print(loss_fn(y_pred, label).item())
 
 有一个非常小的细节，对于分类问题，我们一般会在最后通过一个Linear层，而这个Linear层的bias设置是有讲究的，一般初始化设为
 
-$$ b = -\\log \\frac{1-\\pi}{\\pi} $$
+$$ b = -\log \frac{1-\pi}{\pi} $$
 
-其中，假设二分类中样本数少的类别共有$m$个，样本数多的类别共有$n$个（$m+n$等于总样本数），则$\\pi=\\frac{m}{m+n}$，为什么这样设计？
+其中，假设二分类中样本数少的类别共有$m$个，样本数多的类别共有$n$个（$m+n$等于总样本数），则$\pi=\frac{m}{m+n}$，为什么这样设计？
 
-首先我们知道最后一层的激活函数是$\\sigma:\\frac{1}{1+e^{-(wx+b)}}$，因为默认初始化的情况下$w,b$均为0，此时不管你提取到的特征是什么，或者说不管你输入的是什么，经过激活之后的输出都是0.5（正类和负类都是0.5），这会带来什么问题？
+首先我们知道最后一层的激活函数是$\sigma:\frac{1}{1+e^{-(wx+b)}}$，因为默认初始化的情况下$w,b$均为0，此时不管你提取到的特征是什么，或者说不管你输入的是什么，经过激活之后的输出都是0.5（正类和负类都是0.5），这会带来什么问题？
 
 假设我们使用二分类的CrossEntropyLoss
 
-$$ L = -\\log (p) - (1 - y)\\log (p) $$
+$$ L = -\log (p) - (1 - y)\log (p) $$
 
-那么刚开始的时候，不管输入的是正样本还是负样本（假设负样本特别多），他们的误差都是$-\\log (0.5)$，而负样本的个数多得多，这么看，刚开始训练的时候，loss肯定要被负样本的误差带偏（模型会想方设法尽力全部预测成负样本，以降低loss）
+那么刚开始的时候，不管输入的是正样本还是负样本（假设负样本特别多），他们的误差都是$-\log (0.5)$，而负样本的个数多得多，这么看，刚开始训练的时候，loss肯定要被负样本的误差带偏（模型会想方设法尽力全部预测成负样本，以降低loss）
 
-但是如果我们对最后一层的bias使用上面的初始化呢？把$b$带入到$\\sigma$中
+但是如果我们对最后一层的bias使用上面的初始化呢？把$b$带入到$\sigma$中
 
-$$ \\frac{1}{1+e^{\\log(\\frac{1-\\pi}{\\pi})}}=\\frac{1}{1+(\\frac{1-\\pi}{\\pi})}=\\pi $$
+$$ \frac{1}{1+e^{\log(\frac{1-\pi}{\pi})}}=\frac{1}{1+(\frac{1-\pi}{\pi})}=\pi $$
 
-对于正样本来说，$L=-\\log (\\pi)$；对于负样本来说，$L=-\\log (1-\\pi)$。由于$0<\\pi<1-\\pi<1$，所以$\\log(1-\\pi) < \\log(\\pi)$，这样做了以后，虽然可能所有负样本联合起来的损失仍然比正样本大，但相较于不初始化bias的情况要好很多
+对于正样本来说，$L=-\log (\pi)$；对于负样本来说，$L=-\log (1-\pi)$。由于$0<\pi<1-\pi<1$，所以$\log(1-\pi) < \log(\pi)$，这样做了以后，虽然可能所有负样本联合起来的损失仍然比正样本大，但相较于不初始化bias的情况要好很多
 
 实际上我本人写代码的时候，尤其在`nn.Linear`中喜欢设置`bias=False`，即不添加bias，因为我认为`nn.Linear`多数情况下只是为了转换一下维度，进行一个线性变换的操作，所以加上bias可能会使得原本特征矩阵内的值变得怪怪的，但是这里最好还是加上
 

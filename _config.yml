@@ -2,9 +2,9 @@
 title: YiKe Blog
 SEOTitle: 伊轲的博客 | YiKe Blog
 header-img: img/home-bg.jpg
-email: YiKepro@gmail.com
-description: "关于程序与设计、黑客与画家 | 伊轲，Web & Mobile Lover，Software Engineer，UX Designer | 这里是 @YiKe伊轲 的个人博客，与你一起发现更大的世界。"
-keyword: "伊轲, YiKe伊轲, YiKe,YiKepro, @YiKepro, 伊轲的博客, YiKe Blog, 博客, 个人网站, 互联网, Web,Java, 算法"
+email: weirdoyinke@gmail.com
+description: "程序、人工智能、算法、工程师、机器学习 | 伊轲 | 这里是 @YiKe伊轲 的个人博客，与你一起发现更大的世界。"
+keyword: "伊轲, YiKe伊轲, YiKe, , 伊轲的博客, YiKe Blog, 博客, 个人网站, 互联网, Web,Java, 算法"
 url: "https://echoyinke.github.io"              # your host, for absolute URL
 baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
 
@@ -13,11 +13,10 @@ future: true
 
 # SNS settings
 RSS: false
-#这里如果配置上就会有链接，like http://weibo.com/{{ site.weibo_username }
-#weibo_username:     YiKepro
-#zhihu_username:     YiKepro
-#github_username:    YiKepro
-#twitter_username:   YiKepro
+#weibo_username: YiKepro
+#zhihu_username: YiKepro
+#github_username: YiKepro
+#twitter_username: YiKepro
 #facebook_username:  YiKepro
 #linkedin_username:  firstname-lastname-idxxxx
 
@@ -28,7 +27,7 @@ RSS: false
 highlighter: rouge
 permalink: pretty
 paginate: 10
-exclude: ["less","node_modules","Gruntfile.js","package.json","README.md","README.zh.md"]
+exclude: [ "less","node_modules","Gruntfile.js","package.json","README.md","README.zh.md" ]
 anchorjs: true                          # if you want to customize anchor. check out line:181 of `post.html`
 # If you have timezone issue (e.g. #68) in China, uncomment to use this:
 #timezone: CN  
@@ -39,7 +38,7 @@ anchorjs: true                          # if you want to customize anchor. check
 # from PR#40, to support local preview for Jekyll 3.0
 # make sure you have this gem installed
 # `$ gem install jekyll-paginate`
-plugins: [jekyll-paginate]
+plugins: [ jekyll-paginate ]
 
 
 
@@ -60,7 +59,7 @@ kramdown:
 
 
 # Disqus settings
-disqus_username: YiKe
+#disqus_username: YiKe
 
 # Netease settings
 netease_comment: false
@@ -85,7 +84,7 @@ sidebar-about-description: "For the next quantum leap<br>离开世界之前，�
 
 
 # Featured Tags
-featured-tags: true                     # whether or not using Feature-Tags
+featured-tags: False                     # whether or not using Feature-Tags
 featured-condition-size: 1              # A tag will be featured if the size of it is more than this condition value
 
 
@@ -102,8 +101,8 @@ page-mathjax: false
 
 
 # Friends
-friends: [
-    {
+#friends: [
+#    {
     #     title: "Su",
     #     href: "http://su.gallery/"
 #    # },{
@@ -134,4 +133,4 @@ friends: [
 #        title: "尹峰以为",
 #        href: "http://ingf.github.io/"
 #    }
-]
+#]

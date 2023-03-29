@@ -42,7 +42,7 @@ text = (
     'I am going shopping. What about you?\n' # J
     'I am going to visit my grandmother. she is not very well' # R
 )
-sentences = re.sub("[.,!?\\-]", '', text.lower()).split('\n') # filter '.', ',', '?', '!'
+sentences = re.sub("[.,!?\-]", '', text.lower()).split('\n') # filter '.', ',', '?', '!'
 word_list = list(set(" ".join(sentences).split())) # ['hello', 'how', 'are', 'you',...]
 word2idx = {'[PAD]' : 0, '[CLS]' : 1, '[SEP]' : 2, '[MASK]' : 3}
 for i, w in enumerate(word_list):

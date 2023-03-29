@@ -3,7 +3,7 @@ YiKe Blog
 
 ### [View alive YiKe Blog &rarr;](https://huangxuan.me)  
 
-![](http://huangxuan.me/img/blog-desktop.jpg)
+![](https://echoyinke.github.io/img/blog-desktop.jpg)
 
 
 Boilerplate (beta)
@@ -17,20 +17,20 @@ Boilerplate provide a clean version of this buzz blog.
 $ git clone git@github.com:YiKepro/YiKeblog-boilerplate.git
 ```
 
-**[View alive Boilerplate &rarr;](http://huangxuan.me/YiKeblog-boilerplate/)**
+**[View alive Boilerplate &rarr;](https://echoyinke.github.io/YiKeblog-boilerplate/)**
 
 
 Porting 
 --------
 
 - [**Hexo**](https://github.com/Kaijun/hexo-theme-YiKeblog) by @kaijun
-- [**React-SSR**](https://github.com/LucasIcarus/YiKepro.github.io/tree/ssr) by @LucasIcarus
+- [**React-SSR**](https://github.com/LucasIcarus/echoyinke.github.io/tree/ssr) by @LucasIcarus
 
 
 Documents Translation
 ---------------------
 
- - ![cn](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/China.png) **Chinese (Simplified)**: 感谢 [@BrucZhaoR](https://github.com/BruceZhaoR) 的 [中文翻译 &rarr;](https://github.com/YiKepro/YiKepro.github.io/blob/master/README.zh.md)
+ - ![cn](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/China.png) **Chinese (Simplified)**: 感谢 [@BrucZhaoR](https://github.com/BruceZhaoR) 的 [中文翻译 &rarr;](https://github.com/YiKepro/echoyinke.github.io/blob/master/README.zh.md)
 
 
 Releases
@@ -70,7 +70,7 @@ Shout out to [@kitian616/jekyll-TeXt-theme](https://github.com/kitian616/jekyll-
 
 - Feeling annoyed to delete my blog post after clone or pull? Try **Boilerplate (Beta)** to help you get started quickly and easily merge update.
 - `-apple-system` is added in font rule, which display beautiful new font **San Francisco** in iOS 9 by default.
-- Fixed [issue#15](https://github.com/YiKepro/YiKepro.github.io/issues/15) about code wrap.
+- Fixed [issue#15](https://github.com/YiKepro/echoyinke.github.io/issues/15) about code wrap.
 
 #### V1.5.1
 
@@ -94,7 +94,7 @@ Shout out to [@kitian616/jekyll-TeXt-theme](https://github.com/kitian616/jekyll-
 
 - Big Improvement to the **Navigation Menu** *(especially in Android)*:  Dropping the old, stuttering, low-performance [Bootstrap collapse.js](http://getbootstrap.com/javascript/#collapse),  replaced with an own wrote, [jank free](http://jankfree.org/) navbar menu in a pretty high-performance implementation of [Google Material Design](https://www.google.com/design/spec/material-design/introduction.html).
 
-<img src="http://huangxuan.me/img/blog-md-navbar.gif" width="320" />
+<img src="https://echoyinke.github.io/img/blog-md-navbar.gif" width="320" />
 
 
 #### V1.2
@@ -198,7 +198,7 @@ tags:
 
 ### SideBar
 
-![](http://huangxuan.me/img/blog-sidebar.jpg)
+![](https://echoyinke.github.io/img/blog-sidebar.jpg)
 
 **SideBar** provides possible modules to show off more personal information.
 
@@ -255,7 +255,7 @@ friends: [
 
 ### Keynote Layout
 
-![](http://huangxuan.me/img/blog-keynote.jpg)
+![](https://echoyinke.github.io/img/blog-keynote.jpg)
 
 There is a increased trend to use Open Web technology for keynotes and presentations via Reveal.js, Impress.js, Slides, Prezi etc. I consider a modern blog should have first-class support to embed these HTML based presentation so **Keynote layout** are made.
 
@@ -264,7 +264,7 @@ To use, in the **front-matter**:
 ```yml
 ---
 layout:     keynote
-iframe:     "http://huangxuan.me/js-module-7day/"
+iframe:     "https://echoyinke.github.io/js-module-7day/"
 ---
 ```
 
@@ -321,7 +321,7 @@ Critical code are located in `_include/` and `_layouts/`. Most of them are simpl
 
 ### Header Image
 
-Change header images of any pages or any posts is pretty easy as mentioned above. But, thanks to [issue #6 (in Chinese)](https://github.com/YiKepro/YiKepro.github.io/issues/6) asked, **how to make it looks great?**
+Change header images of any pages or any posts is pretty easy as mentioned above. But, thanks to [issue #6 (in Chinese)](https://github.com/YiKepro/echoyinke.github.io/issues/6) asked, **how to make it looks great?**
 
 **Well...it is actually a design issue**, not a coding stuff. It is better that you have basic design knowledge, but not is ok, let me told you how to make it well-designed:
 
