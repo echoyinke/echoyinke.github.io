@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "transformer 的 PyTorch 实现"
-subtitle: 'transformer'
+subtitle: ''
 author: "YiKe"
 header-style: text
 tags:

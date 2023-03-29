@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "BERT 的 PyTorch 实现"
-subtitle: 'BERT'
+subtitle: ''
 author: "YiKe"
 header-style: text
 tags:

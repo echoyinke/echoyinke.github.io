@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "GraphSAGE&PinSAGE"
-subtitle: 'graphSAGE'
+subtitle: ''
 author: "YiKe"
 header-style: text
 tags:

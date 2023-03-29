@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "NNLM 的 PyTorch 实现"
-subtitle: 'NNLM'
+subtitle: ''
 author: "YiKe"
 header-style: text
 tags:

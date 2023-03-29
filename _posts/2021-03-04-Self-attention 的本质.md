@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "self-attention 的本质"
-subtitle: 'attention'
+subtitle: ''
 author: "YiKe"
 header-style: text
 tags:
