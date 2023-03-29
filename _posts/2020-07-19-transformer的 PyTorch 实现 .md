@@ -49,14 +49,14 @@ Transformer模型主要分为两大部分，分别是**Encoder**和**Decoder**�
 
 论文中使用了sin和cos函数的线性变换来提供给模型位置信息:
 
-$$ PE{(pos,2i)} = \sin(pos / 10000^{2i/d\_{\text{model}}}) \ PE{(pos,2i+1)} = \cos(pos / 10000^{2i/d\_{\text{model}}}) $$
+$$ PE{(pos,2i)} = \sin(pos / 10000^{2i/d_{\text{model}}}) \ PE{(pos,2i+1)} = \cos(pos / 10000^{2i/d_{\text{model}}}) $$
 
-上式中$pos$指的是一句话中某个字的位置，取值范围是$\[0, \text{max\_sequence\_length})$，$i$指的是字向量的维度序号，取值范围是$\[0, \text{embedding\_dimension}/2)$，$d\_{\text{model}}$指的是embedding\_dimension​的值
+上式中$pos$指的是一句话中某个字的位置，取值范围是$\[0, \text{max_sequence_length})$，$i$指的是字向量的维度序号，取值范围是$\[0, \text{embedding_dimension}/2)$，$d_{\text{model}}$指的是embedding_dimension​的值
 
-上面有$\sin$和$\cos$一组公式，也就是对应着embedding\_dimension维度的一组奇数和偶数的序号的维度，例如0,1一组，2,3一组，分别用上面的$\sin$和$\cos$函数做处理，从而产生不同的周期性变化，而位置嵌入在embedding\_dimension​维度上随着维度序号增大，周期变化会越来越慢，最终产生一种包含位置信息的纹理，就像论文原文中第六页讲的，位置嵌入函数的周期从$2 \pi$到$10000 \* 2 \pi$变化，而每一个位置在embedding\_dimension​维度上都会得到不同周期的$\sin$和$\cos$函数的取值组合，从而产生独一的纹理位置信息，最终使得模型学到位置之间的依赖关系和自然语言的时序特性
+上面有$\sin$和$\cos$一组公式，也就是对应着embedding_dimension维度的一组奇数和偶数的序号的维度，例如0,1一组，2,3一组，分别用上面的$\sin$和$\cos$函数做处理，从而产生不同的周期性变化，而位置嵌入在embedding_dimension​维度上随着维度序号增大，周期变化会越来越慢，最终产生一种包含位置信息的纹理，就像论文原文中第六页讲的，位置嵌入函数的周期从$2 \pi$到$10000 \* 2 \pi$变化，而每一个位置在embedding_dimension​维度上都会得到不同周期的$\sin$和$\cos$函数的取值组合，从而产生独一的纹理位置信息，最终使得模型学到位置之间的依赖关系和自然语言的时序特性
 
 
-下面画一下位置嵌入，纵向观察，可见随着embedding\_dimension​序号增大，位置嵌入函数的周期变化越来越平缓
+下面画一下位置嵌入，纵向观察，可见随着embedding_dimension​序号增大，位置嵌入函数的周期变化越来越平缓
 
 ```python
 import numpy as np
@@ -100,13 +100,13 @@ plt.ylabel("Period of Positional Encoding")
 
 ### 2\. Self Attention Mechanism
 
-对于输入的句子$X$，通过WordEmbedding得到该句子中每个字的字向量，同时通过Positional Encoding得到所有字的位置向量，将其相加（维度相同，可以直接相加），得到该字真正的向量表示。第$t$个字的向量记作$x\_t$
+对于输入的句子$X$，通过WordEmbedding得到该句子中每个字的字向量，同时通过Positional Encoding得到所有字的位置向量，将其相加（维度相同，可以直接相加），得到该字真正的向量表示。第$t$个字的向量记作$x_t$
 
-接着我们定义三个矩阵$W\_Q,W\_K.W\_V$，使用这三个矩阵分别对所有的字向量进行三次线性变换，于是所有的字向量又衍生出三个新的向量$q\_t,k\_t,v\_t$。我们将所有的$q\_t$向量拼成一个大矩阵，记作**查询矩阵$Q$**，将所有的$k\_t$向量拼成一个大矩阵，记作**键矩阵$K$**，将所有的$v\_t$向量拼成一个大矩阵，记作**值矩阵$V$**（见下图）
+接着我们定义三个矩阵$W_Q,W_K.W_V$，使用这三个矩阵分别对所有的字向量进行三次线性变换，于是所有的字向量又衍生出三个新的向量$q_t,k_t,v_t$。我们将所有的$q_t$向量拼成一个大矩阵，记作**查询矩阵$Q$**，将所有的$k_t$向量拼成一个大矩阵，记作**键矩阵$K$**，将所有的$v_t$向量拼成一个大矩阵，记作**值矩阵$V$**（见下图）
 
 ![](https://s1.ax1x.com/2020/07/11/Uljdwq.gif#shadow)
 
-为了获得第一个字的注意力权重，我们需要用第一个字的**查询向量**$q\_1$乘以**键矩阵K**（见下图）
+为了获得第一个字的注意力权重，我们需要用第一个字的**查询向量**$q_1$乘以**键矩阵K**（见下图）
 
 ```auto
             [0, 4, 2]
@@ -124,7 +124,7 @@ softmax([2, 4, 4]) = [0.0, 0.5, 0.5]
 
 ![](https://z3.ax1x.com/2021/04/20/c7wCNR.png#shadow)
 
-有了权重之后，将权重其分别乘以对应字的**值向量**$v\_t$（见下图）
+有了权重之后，将权重其分别乘以对应字的**值向量**$v_t$（见下图）
 
 ```python
 0.0 * [1, 2, 3] = [0.0, 0.0, 0.0]
@@ -152,19 +152,19 @@ softmax([2, 4, 4]) = [0.0, 0.5, 0.5]
 
 #### 矩阵计算
 
-上面介绍的方法需要一个循环遍历所有的字$x\_t$，我们可以把上面的向量计算变成矩阵的形式，从而一次计算出所有时刻的输出
+上面介绍的方法需要一个循环遍历所有的字$x_t$，我们可以把上面的向量计算变成矩阵的形式，从而一次计算出所有时刻的输出
 
-第一步就不是计算某个时刻的$q\_t,k\_t,v\_t$了，而是一次计算所有时刻的$Q,K$和$V$。计算过程如下图所示，这里的输入是一个矩阵$X$，矩阵第$t$行为第$t$个词的向量表示$x\_t$
+第一步就不是计算某个时刻的$q_t,k_t,v_t$了，而是一次计算所有时刻的$Q,K$和$V$。计算过程如下图所示，这里的输入是一个矩阵$X$，矩阵第$t$行为第$t$个词的向量表示$x_t$
 
 ![](https://z3.ax1x.com/2021/04/20/c7wF9x.png#shadow)
 
-接下来将$Q$和$K^T$相乘，然后除以$\sqrt{d\_k}$（这是论文中提到的一个trick），经过softmax以后再乘以$V$得到输出
+接下来将$Q$和$K^T$相乘，然后除以$\sqrt{d_k}$（这是论文中提到的一个trick），经过softmax以后再乘以$V$得到输出
 
 ![](https://z3.ax1x.com/2021/04/20/c7wk36.png#shadow)
 
 #### Multi-Head Attention
 
-这篇论文还提出了Multi-Head Attention的概念。其实很简单，前面定义的一组$Q,K,V$可以让一个词attend to相关的词，我们可以定义多组$Q,K,V$，让它们分别关注不同的上下文。计算$Q,K,V$的过程还是一样，只不过线性变换的矩阵从一组$(W^Q,W^K,W^V)$变成了多组$(W^Q\_0,W^K\_0,W^V\_0)$ ，$(W^Q\_1,W^K\_1,W^V\_1)$，…如下图所示
+这篇论文还提出了Multi-Head Attention的概念。其实很简单，前面定义的一组$Q,K,V$可以让一个词attend to相关的词，我们可以定义多组$Q,K,V$，让它们分别关注不同的上下文。计算$Q,K,V$的过程还是一样，只不过线性变换的矩阵从一组$(W^Q,W^K,W^V)$变成了多组$(W^Q_0,W^K_0,W^V_0)$ ，$(W^Q_1,W^K_1,W^V_1)$，…如下图所示
 
 ![](https://z3.ax1x.com/2021/04/20/c7wEjO.png#shadow)
 
@@ -176,11 +176,11 @@ softmax([2, 4, 4]) = [0.0, 0.5, 0.5]
 
 ![](https://s1.ax1x.com/2020/04/25/Jy5rt0.png#shadow)
 
-上面Self Attention的计算过程中，我们通常使用mini-batch来计算，也就是一次计算多句话，即$X$的维度是`[batch_size, sequence_length]`，sequence\_length​是句长，而一个mini-batch是由多个不等长的句子组成的，我们需要按照这个mini-batch中最大的句长对剩余的句子进行补齐，一般用0进行填充，这个过程叫做padding
+上面Self Attention的计算过程中，我们通常使用mini-batch来计算，也就是一次计算多句话，即$X$的维度是`[batch_size, sequence_length]`，sequence_length​是句长，而一个mini-batch是由多个不等长的句子组成的，我们需要按照这个mini-batch中最大的句长对剩余的句子进行补齐，一般用0进行填充，这个过程叫做padding
 
-但这时在进行softmax就会产生问题。回顾softmax函数$\sigma(z\_i)=\frac{e^{z\_i}}{\sum\_{j=1}^K e^{z\_j}}$，$e^0$是1，是有值的，这样的话softmax中被padding的部分就参与了运算，相当于让无效的部分参与了运算，这可能会产生很大的隐患。因此需要做一个mask操作，让这些无效的区域不参与运算，一般是给无效区域加一个很大的负数偏置，即
+但这时在进行softmax就会产生问题。回顾softmax函数$\sigma(z_i)=\frac{e^{z_i}}{\sum_{j=1}^K e^{z_j}}$，$e^0$是1，是有值的，这样的话softmax中被padding的部分就参与了运算，相当于让无效的部分参与了运算，这可能会产生很大的隐患。因此需要做一个mask操作，让这些无效的区域不参与运算，一般是给无效区域加一个很大的负数偏置，即
 
-$$ \begin{align\*} &Z\_{illegal}=Z\_{illegal}+bias\_{illegal}\ &bias\_{illegal}→-∞ \end{align\*} $$
+$$ \begin{align\*} &Z_{illegal}=Z_{illegal}+bias_{illegal}\ &bias_{illegal}→-∞ \end{align\*} $$
 
 ### 3\. 残差连接和Layer Normalization
 
@@ -188,27 +188,27 @@ $$ \begin{align\*} &Z\_{illegal}=Z\_{illegal}+bias\_{illegal}\ &bias\_{illegal}�
 
 我们在上一步得到了经过self-attention加权之后输出，也就是$\text{Self-Attention}(Q, \ K, \ V)$，然后把他们加起来做残差连接
 
-$$ X\_{embedding} + \text{Self-Attention}(Q, \ K, \ V) $$
+$$ X_{embedding} + \text{Self-Attention}(Q, \ K, \ V) $$
 
 #### Layer Normalization
 
 Layer Normalization的作用是把神经网络中隐藏层归一为标准正态分布，也就是$i.i.d$独立同分布，以起到加快训练速度，加速收敛的作用
 
-$$ \mu\_{j}=\frac{1}{m} \sum^{m}\_{i=1}x\_{ij} $$
+$$ \mu_{j}=\frac{1}{m} \sum^{m}_{i=1}x_{ij} $$
 
 上式以矩阵的列（column）为单位求均值;
 
-$$ \sigma^{2}\_{j}=\frac{1}{m} \sum^{m}\_{i=1}(x\_{ij}-\mu\_{j})^{2} $$
+$$ \sigma^{2}_{j}=\frac{1}{m} \sum^{m}_{i=1}(x_{ij}-\mu_{j})^{2} $$
 
 上式以矩阵的列（column）为单位求方差
 
-$$ LayerNorm(x)=\frac{x\_{ij}-\mu\_{j}}{\sqrt{\sigma^{2}\_{j}+\epsilon}} $$
+$$ LayerNorm(x)=\frac{x_{ij}-\mu_{j}}{\sqrt{\sigma^{2}_{j}+\epsilon}} $$
 
 然后用**每一列**的**每一个元素**减去**这列的均值**，再除以**这列的标准差**，从而得到归一化后的数值，加$\epsilon$是为了防止分母为0
 
 ![](https://z3.ax1x.com/2021/04/20/c7wtbQ.png#shadow)
 
-下图展示了更多细节：输入$x\_1,x\_2$经self-attention层之后变成$z\_1,z\_2$，然后和输入$x\_1,x\_2$进行残差连接，经过LayerNorm后输出给全连接层。全连接层也有一个残差连接和一个LayerNorm，最后再输出给下一个Encoder（每个Encoder Block中的FeedForward层权重都是共享的）
+下图展示了更多细节：输入$x_1,x_2$经self-attention层之后变成$z_1,z_2$，然后和输入$x_1,x_2$进行残差连接，经过LayerNorm后输出给全连接层。全连接层也有一个残差连接和一个LayerNorm，最后再输出给下一个Encoder（每个Encoder Block中的FeedForward层权重都是共享的）
 
 ![](https://z3.ax1x.com/2021/04/20/c7wD2V.png#shadow)
 
@@ -222,23 +222,23 @@ $$ X = \text{Embedding-Lookup}(X) + \text{Positional-Encoding} $$
 
 2). 自注意力机制
 
-$$ Q = \text{Linear}\_q(X) = XW\_{Q}\ K = \text{Linear}\_k(X) = XW\_{K}\ V = \text{Linear}\_v(X) = XW\_{V}\ X\_{attention} = \text{Self-Attention}(Q,K,V) $$
+$$ Q = \text{Linear}_q(X) = XW_{Q}\ K = \text{Linear}_k(X) = XW_{K}\ V = \text{Linear}_v(X) = XW_{V}\ X_{attention} = \text{Self-Attention}(Q,K,V) $$
 
 3). self-attention残差连接与Layer Normalization
 
-$$ X\_{attention} = X + X\_{attention}\ X\_{attention} = \text{LayerNorm}(X\_{attention}) $$
+$$ X_{attention} = X + X_{attention}\ X_{attention} = \text{LayerNorm}(X_{attention}) $$
 
 4). 下面进行Encoder block结构图中的**第4部分**，也就是FeedForward，其实就是两层线性映射并用激活函数激活，比如说$ReLU$
 
-$$ X\_{hidden} = \text{Linear}(\text{ReLU}(\text{Linear}(X\_{attention}))) $$
+$$ X_{hidden} = \text{Linear}(\text{ReLU}(\text{Linear}(X_{attention}))) $$
 
 5). FeedForward残差连接与Layer Normalization
 
-$$ X\_{hidden} = X\_{attention} + X\_{hidden}\ X\_{hidden} = \text{LayerNorm}(X\_{hidden}) $$
+$$ X_{hidden} = X_{attention} + X_{hidden}\ X_{hidden} = \text{LayerNorm}(X_{hidden}) $$
 
 其中
 
-$$ X\_{hidden} \in \mathbb{R}^{batch\_size \ \* \ seq\_len. \ \* \ embed\_dim} $$
+$$ X_{hidden} \in \mathbb{R}^{batch_size \ \* \ seq_len. \ \* \ embed_dim} $$
 
 ### 5\. Transformer Decoder整体结构
 
@@ -256,7 +256,7 @@ $$ X\_{hidden} \in \mathbb{R}^{batch\_size \ \* \ seq\_len. \ \* \ embed\_dim} $
 
 具体来说，传统Seq2Seq中Decoder使用的是RNN模型，因此在训练过程中输入$t$时刻的词，模型无论如何也看不到未来时刻的词，因为循环神经网络是时间驱动的，只有当$t$时刻运算结束了，才能看到$t+1$时刻的词。而Transformer Decoder抛弃了RNN，改为Self-Attention，由此就产生了一个问题，在训练过程中，整个ground truth都暴露在Decoder中，这显然是不对的，我们需要对Decoder的输入进行一些处理，该处理被称为Mask
 
-举个例子，Decoder的ground truth为"<start> I am fine"，我们将这个句子输入到Decoder中，经过WordEmbedding和Positional Encoding之后，将得到的矩阵做三次线性变换（$W\_Q,W\_K,W\_V$）。然后进行self-attention操作，首先通过$\frac{Q\times K^T}{\sqrt{d\_k}}$得到Scaled Scores，接下来非常关键，我们要对Scaled Scores进行Mask，举个例子，当我们输入"I"时，模型目前仅知道包括"I"在内之前所有字的信息，即"<start>"和"I"的信息，不应该让其知道"I"之后词的信息。道理很简单，我们做预测的时候是按照顺序一个字一个字的预测，怎么能这个字都没预测完，就已经知道后面字的信息了呢？Mask非常简单，首先生成一个下三角全0，上三角全为负无穷的矩阵，然后将其与Scaled Scores相加即可
+举个例子，Decoder的ground truth为"<start> I am fine"，我们将这个句子输入到Decoder中，经过WordEmbedding和Positional Encoding之后，将得到的矩阵做三次线性变换（$W_Q,W_K,W_V$）。然后进行self-attention操作，首先通过$\frac{Q\times K^T}{\sqrt{d_k}}$得到Scaled Scores，接下来非常关键，我们要对Scaled Scores进行Mask，举个例子，当我们输入"I"时，模型目前仅知道包括"I"在内之前所有字的信息，即"<start>"和"I"的信息，不应该让其知道"I"之后词的信息。道理很简单，我们做预测的时候是按照顺序一个字一个字的预测，怎么能这个字都没预测完，就已经知道后面字的信息了呢？Mask非常简单，首先生成一个下三角全0，上三角全为负无穷的矩阵，然后将其与Scaled Scores相加即可
 
 ![](https://z3.ax1x.com/2021/04/20/c7w48x.png#shadow)
 

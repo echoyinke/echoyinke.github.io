@@ -17,7 +17,7 @@ tags:
 
 怎样才能达到我们上面说的目的呢？很简单，调整损失函数即可，这里主要借鉴了hinge loss和triplet loss的思想。一般常用的交叉熵损失函数是（$y$为one-hot表示，$\hat{y}$为经过softmax后的输出）：
 
-$$ L\_{old} = -\sum y \log \hat{y} $$
+$$ L_{old} = -\sum y \log \hat{y} $$
 
 > 实际上交叉熵损失函数的严格定义为：
 >
@@ -35,7 +35,7 @@ $$ \theta(x) = \left\{\begin{aligned}&1, x > 0\\ &\frac{1}{2}, x = 0\\ &0, x < 0
 
 那么，考虑新的损失函数：
 
-$$ L\_{new} = -\sum\_y \lambda(y, \hat{y}) y\log \hat{y} $$
+$$ L_{new} = -\sum_y \lambda(y, \hat{y}) y\log \hat{y} $$
 
 其中
 
@@ -45,13 +45,13 @@ $$ \lambda(y, \hat{y}) = 1-\theta(y-m)\theta(\hat{y}-m)-\theta(1-m-y)\theta(1-m-
 
 $$ \lambda(y,\hat{y})=\left\{\begin{aligned}&0,\,(y=1\text{且}\hat{y} > m)\text{或}(y=0\text{且}\hat{y} < 1-m)\\ &1,\,\text{其他情形}\end{aligned}\right. $$
 
-$L\_{new}$就是在交叉熵的基础上加入了修正项$\lambda(y,\hat{y})$，这一项意味着，当进入一个正样本时，那么$y=1$，显然
+$L_{new}$就是在交叉熵的基础上加入了修正项$\lambda(y,\hat{y})$，这一项意味着，当进入一个正样本时，那么$y=1$，显然
 
 $$ \lambda(1, \hat{y})=1-\theta(\hat{y} - m) $$
 
 这时候，如果$\hat{y}>m$，那么$\lambda(1, \hat{y})=0$，这时交叉熵自动为0（达到最小值）；反之，$\hat{y}<m$则有$\lambda(1, \hat{y})=1$，此时保持交叉熵，也就是说，**如果正样本的输出已经大于$m$了，那就不更新参数了，小于$m$才继续更新；类似地可以分析负样本的情形，如果负样本的输出已经小于$1-m$了，那就不更新参数了，大于$1-m$才继续更新**
 
-这样一来，只要将原始的交叉熵损失，换成修正的交叉熵$L\_{new}$，就可以达到我们设计的目的了。下面是笔者利用PyTorch实现的多分类Loss（支持二分类），Keras版本请查看苏剑林大佬的[这篇博客](https://kexue.fm/archives/4293)
+这样一来，只要将原始的交叉熵损失，换成修正的交叉熵$L_{new}$，就可以达到我们设计的目的了。下面是笔者利用PyTorch实现的多分类Loss（支持二分类），Keras版本请查看苏剑林大佬的[这篇博客](https://kexue.fm/archives/4293)
 
 ```python
 import torch
@@ -107,7 +107,7 @@ print(loss_fn(y_pred_softmax, label).item())
 
 其实$\lambda(y, \hat{y})$中不可导的部分是$\theta(x)$，因此我们只要"软化"$\theta(x)$即可，而软化它再容易不过了，只需要利用sigmoid函数！我们有
 
-$$ \theta(x)=\lim\_{K\to +\infty}\sigma(Kx) $$
+$$ \theta(x)=\lim_{K\to +\infty}\sigma(Kx) $$
 
 所以很显然，我们只需要将$\theta(x)$替换为$\sigma(Kx)$即可：
 
@@ -119,17 +119,17 @@ $$ \begin{aligned} \lambda(y, \hat{y}) = 1&-\sigma(K(y-m))\sigma(K(\hat{y}-m))\\
 
 二分类问题的标准loss是交叉熵
 
-$$ L\_{ce} = -y\log \hat{y} - (1-y)\log(1-\hat{y})=\left\{\begin{aligned}&-\log(\hat{y}),\,\text{当}y=1\\ &-\log(1-\hat{y}),\,\text{当}y=0\end{aligned}\right. $$
+$$ L_{ce} = -y\log \hat{y} - (1-y)\log(1-\hat{y})=\left\{\begin{aligned}&-\log(\hat{y}),\,\text{当}y=1\\ &-\log(1-\hat{y}),\,\text{当}y=0\end{aligned}\right. $$
 
 其中$y\in \{0, 1\}$是真实标签，$\hat{y}$是预测值。当然，对于二分类函数我们几乎都是用sigmoid函数激活$\hat{y}=\sigma(x)$，所以相当于
 
-$$ L\_{ce} = -y\log \sigma(x) - (1-y)\log\sigma(-x)=\left\{\begin{aligned}&-\log \sigma(x),\,\text{当}y=1\\ &-\log\sigma(-x),\,\text{当}y=0\end{aligned}\right. $$
+$$ L_{ce} = -y\log \sigma(x) - (1-y)\log\sigma(-x)=\left\{\begin{aligned}&-\log \sigma(x),\,\text{当}y=1\\ &-\log\sigma(-x),\,\text{当}y=0\end{aligned}\right. $$
 
 > $1-\sigma(x)=\sigma(-x)$
 
 引入硬截断后的二分类loss形式为
 
-$$ L^\* = \lambda(y, \hat{y})\cdot L\_{ce} $$
+$$ L^\* = \lambda(y, \hat{y})\cdot L_{ce} $$
 
 其中
 
@@ -141,7 +141,7 @@ $$ \lambda(y, \hat{y}) = \left\{\begin{aligned}&\theta(-x),\,\text{当}y=1\\ &\t
 
 > 注意这里我并没有说"等于"，而是"等价于"，因为$\theta(0.5-\hat{y})$表示$\hat{y}>0.5$时取0，小于0.5时取1；而$\theta(-x)$表示$x>0$时取0，小于0时取1。$\hat{y}>0.5$和$\hat{y}<0.5$分别刚好对应$x>0$和$x<0$
 
-因为$\theta(x)=\lim\limits\_{K\to +\infty}\sigma(Kx)$，所以很显然有
+因为$\theta(x)=\lim\limits_{K\to +\infty}\sigma(Kx)$，所以很显然有
 
 $$ L^\* =\left\{\begin{aligned}&-\sigma(-Kx)\log \sigma(x),\,\text{当}y=1\\ &-\sigma(Kx)\log\sigma(-x),\,\text{当}y=0\end{aligned}\right. $$
 
@@ -149,19 +149,19 @@ $$ L^\* =\left\{\begin{aligned}&-\sigma(-Kx)\log \sigma(x),\,\text{当}y=1\\ &-\
 
 以上仅仅只是我们根据已知内容推导的二分类交叉熵损失，Kaiming大神的Focal Loss形式如下：
 
-$$ L\_{fl}=\left\{\begin{aligned}&-(1-\hat{y})^{\gamma}\log \hat{y},\,\text{当}y=1\\ &-\hat{y}^{\gamma}\log (1-\hat{y}),\,\text{当}y=0\end{aligned}\right. $$
+$$ L_{fl}=\left\{\begin{aligned}&-(1-\hat{y})^{\gamma}\log \hat{y},\,\text{当}y=1\\ &-\hat{y}^{\gamma}\log (1-\hat{y}),\,\text{当}y=0\end{aligned}\right. $$
 
 带入$\hat{y} = \sigma(x)$则有
 
-$$ L\_{fl}=\left\{\begin{aligned}&-\sigma^{\gamma}(-x)\log \sigma(x),\,\text{当}y=1\\ &-\sigma^{\gamma}(x)\log\sigma(-x),\,\text{当}y=0\end{aligned}\right. $$
+$$ L_{fl}=\left\{\begin{aligned}&-\sigma^{\gamma}(-x)\log \sigma(x),\,\text{当}y=1\\ &-\sigma^{\gamma}(x)\log\sigma(-x),\,\text{当}y=0\end{aligned}\right. $$
 
-特别地，**如果$K$和$\gamma$都取1，那么$L^\*=L\_{fl}$！**
+特别地，**如果$K$和$\gamma$都取1，那么$L^\*=L_{fl}$！**
 
-事实上$K$和$\gamma$的作用是一样的，都是为了调节权重曲线的陡度，只是调节的方式不太一样。注意$L^\*$或$L\_{fl}$实际上都已经包含了对不均衡样本的解决办法，或者说，类别不均衡本质上就是分类难度差异的体现。**比如负样本远比正样本多的话，模型肯定会倾向于数目多的负类（可以想像模型直接无脑全部预测为负类），这时负类的$\hat{y}^{\gamma}$或$\sigma(Kx)$都很小，而正类的$(1- \hat{y})^{\gamma}$或$\sigma(-Kx)$都很大，这时模型就会开始集中精力关注正样本**
+事实上$K$和$\gamma$的作用是一样的，都是为了调节权重曲线的陡度，只是调节的方式不太一样。注意$L^\*$或$L_{fl}$实际上都已经包含了对不均衡样本的解决办法，或者说，类别不均衡本质上就是分类难度差异的体现。**比如负样本远比正样本多的话，模型肯定会倾向于数目多的负类（可以想像模型直接无脑全部预测为负类），这时负类的$\hat{y}^{\gamma}$或$\sigma(Kx)$都很小，而正类的$(1- \hat{y})^{\gamma}$或$\sigma(-Kx)$都很大，这时模型就会开始集中精力关注正样本**
 
-当然，Kaiming大神还发现对$L\_{fl}$做个权重调整，结果会有微小提升
+当然，Kaiming大神还发现对$L_{fl}$做个权重调整，结果会有微小提升
 
-$$ L\_{fl}=\left\{\begin{aligned}&-\alpha(1-\hat{y})^{\gamma}\log \hat{y},\,\text{当}y=1\\ &-(1-\alpha)\hat{y}^{\gamma}\log (1-\hat{y}),\,\text{当}y=0\end{aligned}\right. $$
+$$ L_{fl}=\left\{\begin{aligned}&-\alpha(1-\hat{y})^{\gamma}\log \hat{y},\,\text{当}y=1\\ &-(1-\alpha)\hat{y}^{\gamma}\log (1-\hat{y}),\,\text{当}y=0\end{aligned}\right. $$
 
 通过一系列调参，得到$\alpha=0.25, \gamma=2$（在他的模型上）的效果最好。注意在他的任务中，正样本是少数样本，也就是说，本来正样本难以“匹敌”负样本，但经过$(1−\hat{y})^{\gamma}$和$\hat{y}^{\gamma}$的"操控"后，也许形势还逆转了，因此要对正样本降权。不过我认为这样调整只是经验结果，理论上很难有一个指导方案来决定$\alpha$的值，如果没有大算力调参，倒不如直接让$\alpha=0.5$（均等）
 
@@ -169,9 +169,9 @@ $$ L\_{fl}=\left\{\begin{aligned}&-\alpha(1-\hat{y})^{\gamma}\log \hat{y},\,\tex
 
 Focal Loss在多分类中的形式也很容易得到，其实就是
 
-$$ L\_{fl} = -(1-\hat{y})^\gamma\log\hat{y\_t} $$
+$$ L_{fl} = -(1-\hat{y})^\gamma\log\hat{y_t} $$
 
-其中，$\hat{y\_t}$是目标的预测值，一般是经过Softmax后的结果
+其中，$\hat{y_t}$是目标的预测值，一般是经过Softmax后的结果
 
 #### 为什么Focal Loss有效？
 

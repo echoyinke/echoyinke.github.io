@@ -48,4 +48,4 @@ PinSAGE算法通过多次随机游走，按游走经过的频率选取邻居，�
 
 #### Reference
 
-+   [https://baidu-pgl.gz.bcebos.com/pgl-course/lesson\_4.pdf](https://baidu-pgl.gz.bcebos.com/pgl-course/lesson_4.pdf)
++   [https://baidu-pgl.gz.bcebos.com/pgl-course/lesson_4.pdf](https://baidu-pgl.gz.bcebos.com/pgl-course/lesson_4.pdf)

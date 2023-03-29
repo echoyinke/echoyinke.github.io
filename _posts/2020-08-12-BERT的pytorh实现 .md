@@ -56,7 +56,7 @@ for sentence in sentences:
     token_list.append(arr)
 ```
 
-最终token\_list是个二维的list，里面每一行代表一句话
+最终token_list是个二维的list，里面每一行代表一句话
 
 ```python
 print(token_list)

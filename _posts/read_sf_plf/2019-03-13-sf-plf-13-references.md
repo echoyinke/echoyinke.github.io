@@ -159,8 +159,8 @@ _thunks_ as _methods_
 ```haskell
 
     let c = ref 0 in
-    let incc = \_:Unit. (c := succ (!c); !c) in
-    let decc = \_:Unit. (c := pred (!c); !c) in (
+    let incc = _:Unit. (c := succ (!c); !c) in
+    let decc = _:Unit. (c := pred (!c); !c) in (
       incc unit; 
       incc unit;          -- in real PL: the concrete syntax is `incc()`
       decc unit
@@ -176,10 +176,10 @@ _constructor_ and _encapsulation_!
 ```haskell
 
     newcounter =
-      \_:Unit.            -- add `(self, init_val)` would make it more "real"
+      _:Unit.            -- add `(self, init_val)` would make it more "real"
         let c = ref 0 in  -- private and only accessible via closure (特权方法)
-        let incc = \_:Unit. (c := succ (!c); !c) in
-        let decc = \_:Unit. (c := pred (!c); !c) in
+        let incc = _:Unit. (c := succ (!c); !c) in
+        let decc = _:Unit. (c := pred (!c); !c) in
         { i=incc, 
           d=decc  }       -- return a "record", or "struct", or "object"!
           
@@ -196,7 +196,7 @@ Previously, we use _closure_ to represent _map_, with _functional update_
 
 ```haskell
 
-    newarray = \_:Unit. ref (\n:Nat.0)
+    newarray = _:Unit. ref (\n:Nat.0)
     lookup = \a:NatArray. \n:Nat. (!a) n   
     update = \a:NatArray. \m:Nat. \v:Nat.
                let oldf = !a in
