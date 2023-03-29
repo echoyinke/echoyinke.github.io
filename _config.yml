@@ -13,10 +13,11 @@ future: true
 
 # SNS settings
 RSS: false
-weibo_username:     YiKepro
-zhihu_username:     YiKepro
-github_username:    YiKepro
-twitter_username:   YiKepro
+#这里如果配置上就会有链接，like http://weibo.com/{{ site.weibo_username }
+#weibo_username:     YiKepro
+#zhihu_username:     YiKepro
+#github_username:    YiKepro
+#twitter_username:   YiKepro
 #facebook_username:  YiKepro
 #linkedin_username:  firstname-lastname-idxxxx
 
