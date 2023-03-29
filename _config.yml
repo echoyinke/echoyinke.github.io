@@ -4,8 +4,8 @@ SEOTitle: 伊轲的博客 | YiKe Blog
 header-img: img/home-bg.jpg
 email: YiKepro@gmail.com
 description: "关于程序与设计、黑客与画家 | 伊轲，Web & Mobile Lover，Software Engineer，UX Designer | 这里是 @YiKe伊轲 的个人博客，与你一起发现更大的世界。"
-keyword: "伊轲, YiKe伊轲, YiKe, 鬼栈, YiKepro, @YiKepro, 伊轲的博客, YiKe Blog, 博客, 个人网站, 互联网, Web, JavaScript, 前端, 设计"
-url: "https://huangxuan.me"              # your host, for absolute URL
+keyword: "伊轲, YiKe伊轲, YiKe,YiKepro, @YiKepro, 伊轲的博客, YiKe Blog, 博客, 个人网站, 互联网, Web,Java, 算法"
+url: "https://echoyinke.github.io"              # your host, for absolute URL
 baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
 
 # Publish posts or collection documents with a future date.
@@ -105,32 +105,32 @@ friends: [
     {
     #     title: "Su",
     #     href: "http://su.gallery/"
-    # },{
-        title: "乱序",
-        href: "http://mida.re/"
-    },{
-        title: "Sherry Wu",
-        href: "https://xuechundesign.github.io"
-    },{
-        title: "Luke 的自留地",
-        href: "http://hmqk1995.github.io"
-    },{
-        title: "Ebn's Blog",
-        href: "http://ebnbin.com/"
-    },{
-        title: "SmdCn's Blog",
-        href: "http://blog.smdcn.net"
-    },{
-        title: "JiyinYiyong",
-        href: "http://tiye.me/"
-    },{
-        title: "David's Game",
-        href: "https://www.ruoyaowu.com/"
-    },{
-        title: "DHong Say",
-        href: "http://dhong.co"
-    },{
-        title: "尹峰以为",
-        href: "http://ingf.github.io/"
-    }
+#    # },{
+#        title: "乱序",
+#        href: "http://mida.re/"
+#    },{
+#        title: "Sherry Wu",
+#        href: "https://xuechundesign.github.io"
+#    },{
+#        title: "Luke 的自留地",
+#        href: "http://hmqk1995.github.io"
+#    },{
+#        title: "Ebn's Blog",
+#        href: "http://ebnbin.com/"
+#    },{
+#        title: "SmdCn's Blog",
+#        href: "http://blog.smdcn.net"
+#    },{
+#        title: "JiyinYiyong",
+#        href: "http://tiye.me/"
+#    },{
+#        title: "David's Game",
+#        href: "https://www.ruoyaowu.com/"
+#    },{
+#        title: "DHong Say",
+#        href: "http://dhong.co"
+#    },{
+#        title: "尹峰以为",
+#        href: "http://ingf.github.io/"
+#    }
 ]
