@@ -43,7 +43,6 @@ tags:
 ### 代码实现（PyTorch）
 
 ```python
-# code by Tae Hwan Jung @graykode, modify by wmathor
 import torch
 import torch.nn as nn
 import torch.optim as optim
