@@ -13,11 +13,11 @@ future: true
 
 # SNS settings
 RSS: false
-#weibo_username: YiKepro
-#zhihu_username: YiKepro
-#github_username: YiKepro
-#twitter_username: YiKepro
-#facebook_username:  YiKepro
+#weibo_username: echoyinke
+#zhihu_username: echoyinke
+#github_username: echoyinke
+#twitter_username: echoyinke
+#facebook_username:  echoyinke
 #linkedin_username:  firstname-lastname-idxxxx
 
 

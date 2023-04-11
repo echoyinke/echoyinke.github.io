@@ -6,7 +6,7 @@
 
  /*!
  * YiKe Blog v1.6.0 (http://startbootstrap.com)
- * Copyright 2016 @YiKepro
+ * Copyright 2016 @echoyinke
  * Licensed under Apache 2.0 
  */
 
