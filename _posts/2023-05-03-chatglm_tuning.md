@@ -34,4 +34,6 @@ while True:
 ```
     这里需要设置resume_download和cache_dir
 
+## gcc 版本升级
 
+参考[stackoverflow](https://stackoverflow.com/questions/36327805/how-to-install-gcc-5-3-with-yum-on-centos-7-2)
