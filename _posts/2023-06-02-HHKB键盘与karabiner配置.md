@@ -16,4 +16,3 @@ tags:
 # 复杂改键
 这个才是关键，这里主要[KE-complex_modifications](https://ke-complex-modifications.pqrs.org/)
 , 这里开源了很有用的配置，主要用`Left ctrl + hjkl to arrow keys`
-
